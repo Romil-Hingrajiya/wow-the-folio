@@ -16,12 +16,9 @@ export default function ProjectsPage() {
     }
   }, []);
 
-  const handleUpdate = (updatedData: Partial<PortfolioData>) => {
-    if (portfolioData) {
-      const newData = { ...portfolioData, ...updatedData };
-      setPortfolioData(newData);
-      storage.savePortfolioData(newData);
-    }
+  const handleDataChange = (newData: PortfolioData) => {
+    setPortfolioData(newData);
+    storage.savePortfolioData(newData);
   };
 
   if (!portfolioData) {
@@ -65,11 +62,9 @@ export default function ProjectsPage() {
       {/* Form Content */}
       <div className="max-w-4xl mx-auto px-6 py-8">
         <div className="bg-gray-800 rounded-lg shadow-xl p-8">
-          <ProjectsStep 
-            data={portfolioData} 
-            onUpdate={handleUpdate}
-            onNext={() => window.location.href = '/work-experience'}
-            onBack={() => window.location.href = '/education-skills'}
+                    <ProjectsStep
+            data={portfolioData}
+            onDataChange={handleDataChange}
           />
         </div>
       </div>

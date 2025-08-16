@@ -16,12 +16,9 @@ export default function ContactPage() {
     }
   }, []);
 
-  const handleUpdate = (updatedData: Partial<PortfolioData>) => {
-    if (portfolioData) {
-      const newData = { ...portfolioData, ...updatedData };
-      setPortfolioData(newData);
-      storage.savePortfolioData(newData);
-    }
+  const handleDataChange = (newData: PortfolioData) => {
+    setPortfolioData(newData);
+    storage.savePortfolioData(newData);
   };
 
   if (!portfolioData) {
@@ -67,9 +64,7 @@ export default function ContactPage() {
         <div className="bg-gray-800 rounded-lg shadow-xl p-8">
           <ContactStep 
             data={portfolioData} 
-            onUpdate={handleUpdate}
-            onNext={() => window.location.href = '/'}
-            onBack={() => window.location.href = '/work-experience'}
+            onDataChange={handleDataChange}
           />
         </div>
       </div>

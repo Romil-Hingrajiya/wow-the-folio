@@ -97,16 +97,7 @@ export default function EducationSkillsStep({ data, onDataChange }: EducationSki
     }
   };
 
-  const getSkillLevelWidth = (level: string) => {
-    switch (level) {
-      case 'Beginner': return 'w-1/5';
-      case 'Elementary': return 'w-2/5';
-      case 'Intermediate': return 'w-3/5';
-      case 'Advanced': return 'w-4/5';
-      case 'Expert': return 'w-full';
-      default: return 'w-3/5';
-    }
-  };
+
 
   return (
     <div className="space-y-8">
@@ -130,7 +121,7 @@ export default function EducationSkillsStep({ data, onDataChange }: EducationSki
 
         {data.education.length === 0 ? (
           <div className="text-center py-8 border-2 border-dashed border-gray-600 rounded-lg">
-            <p className="text-gray-400">No education entries yet. Click "Add Education" to get started.</p>
+            <p className="text-gray-400">No education entries yet. Click &quot;Add Education&quot; to get started.</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -259,7 +250,7 @@ export default function EducationSkillsStep({ data, onDataChange }: EducationSki
               </label>
               <select
                 value={newSkillLevel}
-                onChange={(e) => setNewSkillLevel(e.target.value as any)}
+                onChange={(e) => setNewSkillLevel(e.target.value as 'Beginner' | 'Elementary' | 'Intermediate' | 'Advanced' | 'Expert')}
                 className="w-full px-4 py-3 border border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-700 text-white"
               >
                 <option value="Beginner">Beginner</option>

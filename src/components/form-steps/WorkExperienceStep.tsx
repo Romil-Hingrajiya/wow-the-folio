@@ -26,7 +26,7 @@ export default function WorkExperienceStep({ data, onDataChange }: WorkExperienc
   );
   const [newResponsibility, setNewResponsibility] = useState<{ [key: string]: string }>({});
   const [newTechnology, setNewTechnology] = useState<{ [key: string]: string }>({});
-  const [editingExperience, setEditingExperience] = useState<string | null>(null);
+
 
   const addWorkExperience = () => {
     const newExperience: WorkExperience = {
@@ -43,7 +43,6 @@ export default function WorkExperienceStep({ data, onDataChange }: WorkExperienc
     const updatedExperiences = [...workExperiences, newExperience];
     setWorkExperiences(updatedExperiences);
     onDataChange({ ...data, workExperience: updatedExperiences });
-    setEditingExperience(newExperience.id);
   };
 
   const removeWorkExperience = (id: string) => {
@@ -52,7 +51,7 @@ export default function WorkExperienceStep({ data, onDataChange }: WorkExperienc
     onDataChange({ ...data, workExperience: updatedExperiences });
   };
 
-  const updateWorkExperience = (id: string, field: keyof WorkExperience, value: any) => {
+  const updateWorkExperience = (id: string, field: keyof WorkExperience, value: string | string[] | boolean) => {
     const updatedExperiences = workExperiences.map(exp => 
       exp.id === id ? { ...exp, [field]: value } : exp
     );

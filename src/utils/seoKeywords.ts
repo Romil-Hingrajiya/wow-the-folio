@@ -1,3 +1,5 @@
+import { PortfolioData } from '@/types/portfolio';
+
 export interface SEOKeyword {
   keyword: string;
   category: 'primary' | 'secondary' | 'long-tail';
@@ -389,7 +391,7 @@ export function getHighRelevanceKeywords(keywords: SEOKeyword[]): SEOKeyword[] {
 }
 
 // Function to generate meta description
-export function generateMetaDescription(portfolioData: any, keywords: SEOKeyword[]): string {
+export function generateMetaDescription(portfolioData: PortfolioData, keywords: SEOKeyword[]): string {
   const primaryKeywords = getKeywordsByCategory(keywords, 'primary');
   const name = portfolioData?.fullName || 'Professional';
   const title = portfolioData?.title || 'Portfolio';
@@ -398,7 +400,7 @@ export function generateMetaDescription(portfolioData: any, keywords: SEOKeyword
 }
 
 // Function to generate page title
-export function generatePageTitle(portfolioData: any, keywords: SEOKeyword[]): string {
+export function generatePageTitle(portfolioData: PortfolioData, keywords: SEOKeyword[]): string {
   const name = portfolioData?.fullName || 'Professional';
   const title = portfolioData?.title || 'Portfolio';
   const primaryKeyword = getKeywordsByCategory(keywords, 'primary')[0]?.keyword || 'Portfolio';

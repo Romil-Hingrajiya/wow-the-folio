@@ -12,6 +12,15 @@ export default function PortfolioForm({ data, onDataChange }: PortfolioFormProps
     onDataChange({ ...data, [field]: value });
   };
 
+  const updateSkills = (skillNames: string[]) => {
+    const skills = skillNames.map((name, index) => ({
+      id: `skill-${index}`,
+      name,
+      level: 'Intermediate' as const
+    }));
+    onDataChange({ ...data, skills });
+  };
+
   const updateContact = (field: keyof PortfolioData['contact'], value: string) => {
     onDataChange({
       ...data,
@@ -85,8 +94,11 @@ export default function PortfolioForm({ data, onDataChange }: PortfolioFormProps
           </label>
           <input
             type="text"
-            value={data.skills}
-            onChange={(e) => updateField('skills', e.target.value)}
+            value={data.skills.map(skill => skill.name).join(', ')}
+            onChange={(e) => {
+              const skillNames = e.target.value.split(',').map(s => s.trim()).filter(s => s);
+              updateSkills(skillNames);
+            }}
             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
             placeholder="React, TypeScript, Node.js"
           />
@@ -119,8 +131,8 @@ export default function PortfolioForm({ data, onDataChange }: PortfolioFormProps
                 Description
               </label>
               <textarea
-                value={project.description}
-                onChange={(e) => updateProject(index, 'description', e.target.value)}
+                value={project.shortDescription}
+                onChange={(e) => updateProject(index, 'shortDescription', e.target.value)}
                 rows={2}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                 placeholder="Project description..."
@@ -133,8 +145,8 @@ export default function PortfolioForm({ data, onDataChange }: PortfolioFormProps
               </label>
               <input
                 type="url"
-                value={project.link}
-                onChange={(e) => updateProject(index, 'link', e.target.value)}
+                value={project.liveDemoLink}
+                onChange={(e) => updateProject(index, 'liveDemoLink', e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
                 placeholder="https://example.com"
               />

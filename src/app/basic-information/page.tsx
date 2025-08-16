@@ -16,12 +16,9 @@ export default function BasicInformationPage() {
     }
   }, []);
 
-  const handleUpdate = (updatedData: Partial<PortfolioData>) => {
-    if (portfolioData) {
-      const newData = { ...portfolioData, ...updatedData };
-      setPortfolioData(newData);
-      storage.savePortfolioData(newData);
-    }
+  const handleDataChange = (newData: PortfolioData) => {
+    setPortfolioData(newData);
+    storage.savePortfolioData(newData);
   };
 
   if (!portfolioData) {
@@ -61,8 +58,7 @@ export default function BasicInformationPage() {
         <div className="bg-gray-800 rounded-lg shadow-xl p-8">
           <BasicInfoStep 
             data={portfolioData} 
-            onUpdate={handleUpdate}
-            onNext={() => window.location.href = '/education-skills'}
+            onDataChange={handleDataChange}
           />
         </div>
       </div>

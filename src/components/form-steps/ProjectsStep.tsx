@@ -10,7 +10,7 @@ interface ProjectsStepProps {
 
 export default function ProjectsStep({ data, onDataChange }: ProjectsStepProps) {
   const [newTechnology, setNewTechnology] = useState('');
-  const [imageUploads, setImageUploads] = useState<{ [key: string]: string }>({});
+
   const fileInputRefs = useRef<{ [key: string]: HTMLInputElement | null }>({});
 
   const updateProject = (index: number, field: keyof Project, value: string | boolean) => {
@@ -79,7 +79,6 @@ export default function ProjectsStep({ data, onDataChange }: ProjectsStepProps) 
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result as string;
-        setImageUploads(prev => ({ ...prev, [projectId]: result }));
         
         // Update the project with the uploaded image
         const projectIndex = data.projects.findIndex(p => p.id === projectId);
@@ -100,12 +99,7 @@ export default function ProjectsStep({ data, onDataChange }: ProjectsStepProps) 
       const imageArray = currentImages.split(',').map(img => img.trim()).filter(img => img !== imageToRemove);
       updateProject(projectIndex, 'projectImages', imageArray.join(', '));
       
-      // Remove from imageUploads state
-      setImageUploads(prev => {
-        const newState = { ...prev };
-        delete newState[projectId];
-        return newState;
-      });
+
     }
   };
 
@@ -355,7 +349,7 @@ export default function ProjectsStep({ data, onDataChange }: ProjectsStepProps) 
                   <div>
                     <input
                       type="file"
-                      ref={(el) => fileInputRefs.current[project.id] = el}
+                      ref={(el) => { fileInputRefs.current[project.id] = el; }}
                       onChange={(e) => handleImageUpload(project.id, e)}
                       accept="image/*"
                       className="hidden"

@@ -28,8 +28,7 @@ const STEPS = [
 
 export default function MultiStepForm({ data, onDataChange }: MultiStepFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
-  const [stepValidation, setStepValidation] = useState<{[key: number]: boolean}>({});
-  const stepRefs = useRef<{[key: number]: any}>({});
+
 
   const handleNext = () => {
     // Validate current step before proceeding
@@ -42,11 +41,8 @@ export default function MultiStepForm({ data, onDataChange }: MultiStepFormProps
       );
       
       if (!isValid) {
-        // Trigger validation display by marking all fields as touched
-        if (stepRefs.current[currentStep]?.validate) {
-          stepRefs.current[currentStep].validate();
-        }
-        return; // Don't proceed if validation fails
+        // Don't proceed if validation fails
+        return;
       }
     }
     
@@ -130,7 +126,7 @@ export default function MultiStepForm({ data, onDataChange }: MultiStepFormProps
           <LivePreview data={data} />
         ) : CurrentStepComponent ? (
           <CurrentStepComponent 
-            ref={(ref) => { stepRefs.current[currentStep] = ref; }}
+
             data={data} 
             onDataChange={onDataChange} 
           />

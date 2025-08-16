@@ -10,7 +10,7 @@ interface BasicInfoStepProps {
 }
 
 const BasicInfoStep = forwardRef<{ validate: () => boolean }, BasicInfoStepProps>(
-  ({ data, onDataChange, onValidationChange }, ref) => {
+  function BasicInfoStep({ data, onDataChange, onValidationChange }, ref) {
   const [profilePreview, setProfilePreview] = useState<string>('');
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [touched, setTouched] = useState<{[key: string]: boolean}>({});

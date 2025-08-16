@@ -112,7 +112,7 @@ export default function Template2({ data }: Template2Props) {
               Work Experience
             </h2>
             <div className="space-y-8">
-              {data.workExperience.map((experience, index) => (
+                                {data.workExperience.map((experience) => (
                 <div key={experience.id} className="bg-white rounded-lg p-6 border-l-4 shadow-md" style={{ borderLeftColor: data.customization.primaryColor }}>
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
                     <div>
@@ -176,7 +176,7 @@ export default function Template2({ data }: Template2Props) {
               Projects
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {data.projects.map((project, index) => (
+                                {data.projects.map((project) => (
                 <div key={project.id} className="bg-white rounded-lg overflow-hidden border border-gray-200 hover:border-blue-300 transition-colors shadow-md hover:shadow-lg">
                   {project.projectImages && (
                     <div className="h-48 bg-gray-100 relative">
@@ -250,7 +250,7 @@ export default function Template2({ data }: Template2Props) {
               Education
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {data.education.map((edu, index) => (
+                                {data.education.map((edu) => (
                 <div key={edu.id} className="bg-white rounded-lg p-6 border-l-4 shadow-md" style={{ borderLeftColor: data.customization.primaryColor }}>
                   <h3 className="text-xl font-semibold mb-2 text-gray-900">{edu.fieldOfStudy}</h3>
                   <p className="text-blue-600 font-medium mb-2">{edu.institution}</p>
@@ -275,7 +275,7 @@ export default function Template2({ data }: Template2Props) {
               Skills
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {data.skills.map((skill, index) => (
+                                {data.skills.map((skill) => (
                 <div key={skill.id} className="bg-white rounded-lg p-6 shadow-md">
                   <div className="flex justify-between items-center mb-2">
                     <h3 className="font-semibold text-gray-900">{skill.name}</h3>

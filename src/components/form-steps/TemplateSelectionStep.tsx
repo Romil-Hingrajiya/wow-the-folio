@@ -110,7 +110,7 @@ export default function TemplateSelectionStep({ data, onDataChange }: TemplateSe
 
       {/* Help Text */}
       <div className="text-center text-gray-400 text-sm">
-        <p>Don't worry! You can customize colors, fonts, and other styling options in the next step.</p>
+        <p>Don&apos;t worry! You can customize colors, fonts, and other styling options in the next step.</p>
       </div>
     </div>
   );

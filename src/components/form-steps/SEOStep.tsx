@@ -2,14 +2,14 @@
 
 import { useState } from 'react';
 import { PortfolioData } from '@/types/portfolio';
-import { SEOKeyword, SEOConfig } from '@/utils/seoKeywords';
+import { SEOKeyword } from '@/utils/seoKeywords';
 
 interface SEOStepProps {
   data: PortfolioData;
   onDataChange: (data: PortfolioData) => void;
 }
 
-export default function SEOStep({ data, onDataChange }: SEOStepProps) {
+export default function SEOStep({ data }: SEOStepProps) {
   const [seoKeywords, setSeoKeywords] = useState<SEOKeyword[]>([]);
   const [newKeyword, setNewKeyword] = useState('');
   const [newKeywordCategory, setNewKeywordCategory] = useState<SEOKeyword['category']>('primary');
@@ -32,11 +32,7 @@ export default function SEOStep({ data, onDataChange }: SEOStepProps) {
     setSeoKeywords(seoKeywords.filter((_, i) => i !== index));
   };
 
-  const updateKeyword = (index: number, field: keyof SEOKeyword, value: any) => {
-    const updatedKeywords = [...seoKeywords];
-    updatedKeywords[index] = { ...updatedKeywords[index], [field]: value };
-    setSeoKeywords(updatedKeywords);
-  };
+
 
   return (
     <div className="space-y-8">
@@ -196,7 +192,7 @@ export default function SEOStep({ data, onDataChange }: SEOStepProps) {
             </div>
             <div className="flex items-start gap-3">
               <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-              <p>Include location-based keywords if you're targeting local opportunities</p>
+              <p>Include location-based keywords if you&apos;re targeting local opportunities</p>
             </div>
             <div className="flex items-start gap-3">
               <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>

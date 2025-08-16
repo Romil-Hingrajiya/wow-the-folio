@@ -1,10 +1,11 @@
 'use client';
 
 import Head from 'next/head';
+import { PortfolioData, Skill } from '@/types/portfolio';
 import { SEOConfig, SEOKeyword, generateKeywordsString, generateMetaDescription, generatePageTitle } from '@/utils/seoKeywords';
 
 interface SEOHeadProps {
-  portfolioData?: any;
+  portfolioData?: PortfolioData;
   seoConfig?: SEOConfig;
   keywords?: SEOKeyword[];
   customTitle?: string;
@@ -71,7 +72,7 @@ export default function SEOHead({
                 portfolioData.contact?.github,
                 portfolioData.contact?.linkedin
               ].filter(Boolean),
-              "knowsAbout": portfolioData.skills?.map((skill: any) => skill.name) || [],
+              "knowsAbout": portfolioData.skills?.map((skill: Skill) => skill.name) || [],
               "hasOccupation": {
                 "@type": "Occupation",
                 "name": portfolioData.title

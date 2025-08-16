@@ -70,6 +70,34 @@ export default function Template1({ data }: Template1Props) {
           transform: scale(1.02);
         }
       }
+      @keyframes sweep {
+        0% {
+          transform: translateX(-100%);
+          opacity: 0;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+      }
+      .sweep-animation {
+        position: relative;
+        overflow: hidden;
+      }
+      .sweep-animation::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+        transform: translateX(-100%);
+        animation: sweep 3s infinite;
+      }
       .hover-lift {
         transition: transform 0.3s ease, box-shadow 0.3s ease;
       }
@@ -208,7 +236,7 @@ export default function Template1({ data }: Template1Props) {
     };
 
     // Make updateProjectDots available globally
-    (window as any).updateProjectDots = updateProjectDots;
+    (window as Window & { updateProjectDots?: (activeIndex: number) => void }).updateProjectDots = updateProjectDots;
 
     // Auto-play for project slider
     let autoPlayInterval: NodeJS.Timeout;
@@ -242,7 +270,7 @@ export default function Template1({ data }: Template1Props) {
         clearInterval(autoPlayInterval);
       }
     };
-  }, [data.customization.font, data.customization.primaryColor, data.customization.secondaryColor]);
+  }, [data.customization.font, data.customization.primaryColor, data.customization.secondaryColor, data.projects]);
 
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
@@ -367,7 +395,7 @@ export default function Template1({ data }: Template1Props) {
             <div className="space-y-8 slide-up">
               {/* Welcome Text */}
               <p className="text-blue-300 text-lg font-medium">
-                Let's make something great together.
+                Let&apos;s make something great together.
               </p>
               
               {/* Main Headline */}
@@ -505,7 +533,7 @@ export default function Template1({ data }: Template1Props) {
                   </ul>
                 ) : (
                   <p className="text-lg text-gray-300">
-                    I'm a {data.title || 'professional'} from {data.address || 'the world'}. Currently working on amazing projects and building innovative solutions.
+                    I&apos;m a {data.title || 'professional'} from {data.address || 'the world'}. Currently working on amazing projects and building innovative solutions.
                   </p>
                 )}
               </div>
@@ -689,7 +717,7 @@ export default function Template1({ data }: Template1Props) {
                         const newIndex = currentIndex === 0 ? data.projects.length - 1 : currentIndex - 1;
                         slider.setAttribute('data-current', newIndex.toString());
                         slider.style.transform = `translateX(-${newIndex * 100}%)`;
-                        (window as any).updateProjectDots(newIndex);
+                        (window as Window & { updateProjectDots?: (activeIndex: number) => void }).updateProjectDots?.(newIndex);
 
                       }
                     }}
@@ -707,7 +735,7 @@ export default function Template1({ data }: Template1Props) {
                           const newIndex = currentIndex === data.projects.length - 1 ? 0 : currentIndex + 1;
                           slider.setAttribute('data-current', newIndex.toString());
                           slider.style.transform = `translateX(-${newIndex * 100}%)`;
-                          (window as any).updateProjectDots(newIndex);
+                          (window as Window & { updateProjectDots?: (activeIndex: number) => void }).updateProjectDots?.(newIndex);
 
                         }
                       }}
@@ -868,7 +896,7 @@ export default function Template1({ data }: Template1Props) {
                         if (slider) {
                           slider.setAttribute('data-current', index.toString());
                           slider.style.transform = `translateX(-${index * 100}%)`;
-                          (window as any).updateProjectDots(index);
+                          (window as Window & { updateProjectDots?: (activeIndex: number) => void }).updateProjectDots?.(index);
 
                         }
                       }}
@@ -886,43 +914,74 @@ export default function Template1({ data }: Template1Props) {
       )}
 
 
-             {/* Education */}
-       {data.education && data.education.length > 0 && (
-         <section id="education" className="py-16 px-6 bg-gray-800">
-           <div className="max-w-6xl mx-auto">
-             <h2 className="text-3xl font-bold text-center mb-12" style={{ color: data.customization.primaryColor }}>
-               Education
-             </h2>
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-               {data.education.map((edu, index) => (
-                 <div key={edu.id} className="bg-gray-700 rounded-lg p-6 border-l-4 shadow-lg" style={{ borderLeftColor: data.customization.primaryColor }}>
-                   <div className="flex justify-between items-start mb-3">
-                     <h3 className="text-xl font-semibold">{edu.fieldOfStudy}</h3>
-                     {edu.grade && (
-                       <span className="inline-block bg-green-600 text-white text-xs px-2 py-1 rounded-full">
-                         {edu.grade}
-                       </span>
-                     )}
-                   </div>
-                   <p className="text-blue-400 mb-3 font-medium">{edu.institution}</p>
-                   <div className="flex items-center text-gray-400 text-sm mb-3">
-                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                     </svg>
-                     {formatDateRange(edu.startDate, edu.endDate, false)}
-                   </div>
-                   <div className="bg-gray-600 rounded-lg p-3">
-                     <h4 className="font-semibold text-sm mb-1" style={{ color: data.customization.secondaryColor }}>
-                       Field of Study
-                     </h4>
-                     <p className="text-gray-300 text-sm">{edu.fieldOfStudy}</p>
-                   </div>
-                 </div>
-               ))}
-             </div>
-           </div>
-         </section>
-       )}
+      {/* Enhanced Education Section */}
+      {data.education && data.education.length > 0 && (
+        <section id="education" className="py-16 px-6 bg-black">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12 slide-up">
+              <h2 className="text-4xl font-bold mb-4" style={{ color: data.customization.primaryColor }}>
+                Education
+              </h2>
+              <div className="w-24 h-1 mx-auto rounded-full" style={{ backgroundColor: data.customization.primaryColor }}></div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                {data.education.map((edu) => (
+                <div key={edu.id} className="relative sweep-animation">
+                  {/* Tab Background */}
+                  <div className="absolute inset-0 rounded-2xl" style={{ 
+                    background: `linear-gradient(135deg, ${data.customization.primaryColor}25, ${data.customization.primaryColor}15, rgba(0,0,0,0.9))`,
+                    transform: 'translateY(4px)',
+                    filter: 'blur(8px)',
+                    opacity: 0.7
+                  }}></div>
+                  
+                  {/* Main Card */}
+                  <div className="relative rounded-2xl p-8 border border-gray-700/50 hover-lift backdrop-blur-md" style={{ 
+                    background: `linear-gradient(135deg, ${data.customization.primaryColor}15, ${data.customization.primaryColor}08, rgba(0,0,0,0.8))`,
+                    borderLeftColor: data.customization.primaryColor, 
+                    borderLeftWidth: '6px',
+                    boxShadow: `0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 ${data.customization.primaryColor}20`
+                  }}>
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                      <div className="flex-1">
+                        <div className="flex items-center mb-2">
+                          <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: data.customization.primaryColor }}>
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                          </svg>
+                          <h3 className="text-2xl font-bold text-white">{edu.fieldOfStudy}</h3>
+                        </div>
+                        <div className="flex items-center text-blue-400 font-medium mb-2">
+                          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                          </svg>
+                          <span className="text-xl">{edu.institution}</span>
+                        </div>
+                      </div>
+                      <div className="text-right mt-4 md:mt-0">
+                        <div className="rounded-lg p-3 backdrop-blur-sm" style={{ 
+                          background: `linear-gradient(135deg, ${data.customization.primaryColor}20, rgba(0,0,0,0.6))`,
+                          border: `1px solid ${data.customization.primaryColor}30`
+                        }}>
+                          <p className="text-gray-300 font-medium">
+                            {formatDateRange(edu.startDate, edu.endDate, false)}
+                          </p>
+                          {edu.grade && (
+                            <span className="inline-block bg-gradient-to-r from-green-500 to-green-600 text-white text-xs px-3 py-1 rounded-full mt-2 font-medium">
+                              Grade: {edu.grade}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
              {/* Skills */}
        {data.skills && data.skills.length > 0 && (
@@ -1007,7 +1066,7 @@ export default function Template1({ data }: Template1Props) {
                    Skills Summary
                  </h3>
                  <div className="flex flex-wrap justify-center gap-2">
-                   {data.skills.map((skill, index) => (
+                   {data.skills.map((skill) => (
                      <span
                        key={skill.id}
                        className="px-3 py-1 bg-gray-700 rounded-full text-sm border"
@@ -1023,74 +1082,139 @@ export default function Template1({ data }: Template1Props) {
          </section>
        )}
 
-      {/* Contact */}
-      <section id="contact" className="py-16 px-6 bg-gray-800">
+      {/* Enhanced Contact Section */}
+      <section id="contact" className="py-16 px-6 bg-black">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-12" style={{ color: data.customization.primaryColor }}>
-            Contact Information
-          </h2>
+          <div className="text-center mb-12 slide-up">
+            <h2 className="text-4xl font-bold mb-4" style={{ color: data.customization.primaryColor }}>
+              Get In Touch
+            </h2>
+            <div className="w-24 h-1 mx-auto rounded-full" style={{ backgroundColor: data.customization.primaryColor }}></div>
+          </div>
           
           {/* Essential Contact */}
-          <div className="mb-8">
-            <h3 className="text-xl font-semibold mb-4 text-center" style={{ color: data.customization.secondaryColor }}>
+          <div className="mb-12">
+            <h3 className="text-2xl font-semibold mb-8 text-center" style={{ color: data.customization.secondaryColor }}>
               Essential Contact
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex justify-center space-x-8">
               {data.contact.email && (
-                <a href={`mailto:${data.contact.email}`} className="flex items-center p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
-                  <svg className="w-5 h-5 mr-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a 
+                  href={`mailto:${data.contact.email}`} 
+                  className="group relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg"
+                  style={{ 
+                    background: `linear-gradient(135deg, ${data.customization.primaryColor}20, ${data.customization.primaryColor}10)`,
+                    border: `2px solid ${data.customization.primaryColor}`
+                  }}
+                >
+                  <svg className="w-8 h-8 text-white group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  <span>{data.contact.email}</span>
+                  <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    Email
+                  </span>
                 </a>
               )}
               {data.contact.phone && (
-                <a href={`tel:${data.contact.phone}`} className="flex items-center p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
-                  <svg className="w-5 h-5 mr-3 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a 
+                  href={`tel:${data.contact.phone}`} 
+                  className="group relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg"
+                  style={{ 
+                    background: `linear-gradient(135deg, ${data.customization.primaryColor}20, ${data.customization.primaryColor}10)`,
+                    border: `2px solid ${data.customization.primaryColor}`
+                  }}
+                >
+                  <svg className="w-8 h-8 text-white group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                   </svg>
-                  <span>{data.contact.phone}</span>
+                  <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    Phone
+                  </span>
                 </a>
               )}
             </div>
           </div>
 
           {/* Professional Networks */}
-          <div className="mb-8">
-            <h3 className="text-xl font-semibold mb-4 text-center" style={{ color: data.customization.secondaryColor }}>
+          <div className="mb-12">
+            <h3 className="text-2xl font-semibold mb-8 text-center" style={{ color: data.customization.secondaryColor }}>
               Professional Networks
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="flex justify-center flex-wrap gap-6">
               {data.contact.github && (
-                <a href={data.contact.github} target="_blank" rel="noopener noreferrer" className="flex items-center p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
-                  <svg className="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                <a 
+                  href={data.contact.github} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="group relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg"
+                  style={{ 
+                    background: `linear-gradient(135deg, ${data.customization.primaryColor}20, ${data.customization.primaryColor}10)`,
+                    border: `2px solid ${data.customization.primaryColor}`
+                  }}
+                >
+                  <svg className="w-8 h-8 text-white group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                   </svg>
-                  <span>GitHub</span>
+                  <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    GitHub
+                  </span>
                 </a>
               )}
               {data.contact.linkedin && (
-                <a href={data.contact.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
-                  <svg className="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                <a 
+                  href={data.contact.linkedin} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="group relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg"
+                  style={{ 
+                    background: `linear-gradient(135deg, ${data.customization.primaryColor}20, ${data.customization.primaryColor}10)`,
+                    border: `2px solid ${data.customization.primaryColor}`
+                  }}
+                >
+                  <svg className="w-8 h-8 text-white group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                   </svg>
-                  <span>LinkedIn</span>
+                  <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    LinkedIn
+                  </span>
                 </a>
               )}
               {data.contact.twitter && (
-                <a href={data.contact.twitter} target="_blank" rel="noopener noreferrer" className="flex items-center p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
-                  <svg className="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                <a 
+                  href={data.contact.twitter} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="group relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg"
+                  style={{ 
+                    background: `linear-gradient(135deg, ${data.customization.primaryColor}20, ${data.customization.primaryColor}10)`,
+                    border: `2px solid ${data.customization.primaryColor}`
+                  }}
+                >
+                  <svg className="w-8 h-8 text-white group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
                   </svg>
-                  <span>Twitter</span>
+                  <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    Twitter
+                  </span>
                 </a>
               )}
               {data.contact.website && (
-                <a href={data.contact.website} target="_blank" rel="noopener noreferrer" className="flex items-center p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
-                  <svg className="w-5 h-5 mr-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a 
+                  href={data.contact.website} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="group relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg"
+                  style={{ 
+                    background: `linear-gradient(135deg, ${data.customization.primaryColor}20, ${data.customization.primaryColor}10)`,
+                    border: `2px solid ${data.customization.primaryColor}`
+                  }}
+                >
+                  <svg className="w-8 h-8 text-white group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
                   </svg>
-                  <span>Website</span>
+                  <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    Website
+                  </span>
                 </a>
               )}
             </div>
@@ -1099,44 +1223,110 @@ export default function Template1({ data }: Template1Props) {
           {/* Additional Contact */}
           {(data.contact.dribbble || data.contact.behance || data.contact.blog || data.contact.media || data.contact.whatsapp || data.contact.telegram) && (
             <div>
-              <h3 className="text-xl font-semibold mb-4 text-center" style={{ color: data.customization.secondaryColor }}>
+              <h3 className="text-2xl font-semibold mb-8 text-center" style={{ color: data.customization.secondaryColor }}>
                 Additional Links
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="flex justify-center flex-wrap gap-6">
                 {data.contact.dribbble && (
-                  <a href={data.contact.dribbble} target="_blank" rel="noopener noreferrer" className="flex items-center p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
-                    <span className="w-5 h-5 mr-3 text-pink-400">🎨</span>
-                    <span>Dribbble</span>
+                  <a 
+                    href={data.contact.dribbble} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="group relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg"
+                    style={{ 
+                      background: `linear-gradient(135deg, ${data.customization.primaryColor}20, ${data.customization.primaryColor}10)`,
+                      border: `2px solid ${data.customization.primaryColor}`
+                    }}
+                  >
+                    <span className="text-2xl group-hover:scale-110 transition-transform">🎨</span>
+                    <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                      Dribbble
+                    </span>
                   </a>
                 )}
                 {data.contact.behance && (
-                  <a href={data.contact.behance} target="_blank" rel="noopener noreferrer" className="flex items-center p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
-                    <span className="w-5 h-5 mr-3 text-blue-400">📐</span>
-                    <span>Behance</span>
+                  <a 
+                    href={data.contact.behance} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="group relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg"
+                    style={{ 
+                      background: `linear-gradient(135deg, ${data.customization.primaryColor}20, ${data.customization.primaryColor}10)`,
+                      border: `2px solid ${data.customization.primaryColor}`
+                    }}
+                  >
+                    <span className="text-2xl group-hover:scale-110 transition-transform">📐</span>
+                    <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                      Behance
+                    </span>
                   </a>
                 )}
                 {data.contact.blog && (
-                  <a href={data.contact.blog} target="_blank" rel="noopener noreferrer" className="flex items-center p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
-                    <span className="w-5 h-5 mr-3 text-green-400">📝</span>
-                    <span>Blog</span>
+                  <a 
+                    href={data.contact.blog} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="group relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg"
+                    style={{ 
+                      background: `linear-gradient(135deg, ${data.customization.primaryColor}20, ${data.customization.primaryColor}10)`,
+                      border: `2px solid ${data.customization.primaryColor}`
+                    }}
+                  >
+                    <span className="text-2xl group-hover:scale-110 transition-transform">📝</span>
+                    <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                      Blog
+                    </span>
                   </a>
                 )}
                 {data.contact.media && (
-                  <a href={data.contact.media} target="_blank" rel="noopener noreferrer" className="flex items-center p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
-                    <span className="w-5 h-5 mr-3 text-red-400">🎥</span>
-                    <span>Media</span>
+                  <a 
+                    href={data.contact.media} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="group relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg"
+                    style={{ 
+                      background: `linear-gradient(135deg, ${data.customization.primaryColor}20, ${data.customization.primaryColor}10)`,
+                      border: `2px solid ${data.customization.primaryColor}`
+                    }}
+                  >
+                    <span className="text-2xl group-hover:scale-110 transition-transform">🎥</span>
+                    <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                      Media
+                    </span>
                   </a>
                 )}
                 {data.contact.whatsapp && (
-                  <a href={data.contact.whatsapp} target="_blank" rel="noopener noreferrer" className="flex items-center p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
-                    <span className="w-5 h-5 mr-3 text-green-400">💬</span>
-                    <span>WhatsApp</span>
+                  <a 
+                    href={data.contact.whatsapp} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="group relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg"
+                    style={{ 
+                      background: `linear-gradient(135deg, ${data.customization.primaryColor}20, ${data.customization.primaryColor}10)`,
+                      border: `2px solid ${data.customization.primaryColor}`
+                    }}
+                  >
+                    <span className="text-2xl group-hover:scale-110 transition-transform">💬</span>
+                    <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                      WhatsApp
+                    </span>
                   </a>
                 )}
                 {data.contact.telegram && (
-                  <a href={data.contact.telegram} target="_blank" rel="noopener noreferrer" className="flex items-center p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
-                    <span className="w-5 h-5 mr-3 text-blue-400">📱</span>
-                    <span>Telegram</span>
+                  <a 
+                    href={data.contact.telegram} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="group relative w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg"
+                    style={{ 
+                      background: `linear-gradient(135deg, ${data.customization.primaryColor}20, ${data.customization.primaryColor}10)`,
+                      border: `2px solid ${data.customization.primaryColor}`
+                    }}
+                  >
+                    <span className="text-2xl group-hover:scale-110 transition-transform">📱</span>
+                    <span className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                      Telegram
+                    </span>
                   </a>
                 )}
               </div>
